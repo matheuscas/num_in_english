@@ -1,5 +1,3 @@
-from typing import Union, List
-
 unit_numbers = {
     0: "zero",
     1: "one",
@@ -27,6 +25,7 @@ TY = "ty"
 HUNDRED = "hundred"
 THOUSAND = "thousand"
 MILLION = "million"
+BILLION = "billion"
 
 common_prefixes = {
     3: "thir",
@@ -53,7 +52,8 @@ def get_full_written_number(number: int) -> str:
         sizes = {
             HUNDRED: -2,
             THOUSAND: -3,
-            MILLION: -6
+            MILLION: -6,
+            BILLION: -9
         }
 
         first_part = num[sizes[size]:]
@@ -78,3 +78,5 @@ def get_full_written_number(number: int) -> str:
         return get_full_written_number_above_hundred(THOUSAND)
     elif 1_000_000 <= number < 1_000_000_000:
         return get_full_written_number_above_hundred(MILLION)
+    elif 1_000_000_000 <= number < 1_000_000_000_000:
+        return get_full_written_number_above_hundred(BILLION)

@@ -104,6 +104,17 @@ def test_millions():
                                                  "thousand nine hundred ninety nine"
     assert get_full_written_number(1000000) == "one million"
     assert get_full_written_number(1000100) == "one million one hundred"
+    assert get_full_written_number(12345678) == "twelve million three hundred forty five thousand " \
+                                                "six hundred seventy eight"
+
+
+def test_billions():
+    assert get_full_written_number(9130848398) == "nine billion one hundred thirty million eight hundred forty eight " \
+                                                  "thousand three hundred ninety eight"
+    assert get_full_written_number(1000000000) == "one billion"
+    assert get_full_written_number(1000000001) == "one billion one"
+    assert get_full_written_number(2037741393) == "two billion thirty seven million seven hundred forty one " \
+                                                  "thousand three hundred ninety three"
 
 
 
