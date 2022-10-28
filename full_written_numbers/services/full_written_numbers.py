@@ -40,6 +40,10 @@ teen_prefixes = {**common_prefixes, **{4: "four"}}
 ty_prefixes = {**common_prefixes, **{4: "for"}}
 
 
+class UnsupportedNumberException(Exception):
+    pass
+
+
 def get_full_written_number(number: int) -> str:
     if number < 10:
         return unit_numbers[number]
@@ -80,3 +84,5 @@ def get_full_written_number(number: int) -> str:
         return get_full_written_number_above_hundred(MILLION)
     elif 1_000_000_000 <= number < 1_000_000_000_000:
         return get_full_written_number_above_hundred(BILLION)
+
+    raise UnsupportedNumberException("Number too high to convert.")

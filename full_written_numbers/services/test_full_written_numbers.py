@@ -1,4 +1,6 @@
-from full_written_numbers.services.full_written_numbers import get_full_written_number
+import pytest
+
+from full_written_numbers.services.full_written_numbers import get_full_written_number, UnsupportedNumberException
 
 
 def test_unit_numbers():
@@ -115,6 +117,11 @@ def test_billions():
     assert get_full_written_number(1000000001) == "one billion one"
     assert get_full_written_number(2037741393) == "two billion thirty seven million seven hundred forty one " \
                                                   "thousand three hundred ninety three"
+
+
+def test_exception():
+    with pytest.raises(UnsupportedNumberException):
+        assert get_full_written_number(8152953207178786) == "🤯"
 
 
 
