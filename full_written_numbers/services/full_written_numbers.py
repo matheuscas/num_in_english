@@ -64,7 +64,7 @@ def get_full_written_number(number: int) -> str:
 
         return hundred_part if dozen_part == 'zero' else f"{hundred_part} {dozen_part}"
     elif 1000 <= number < 1_000_000:
-        hundred_part = num[-3:] # last three numbers
+        hundred_part = num[-3:]  # last three numbers
         thousand_part = num[:-3]
 
         hundred_sentence_part = get_full_written_number(int(hundred_part))
@@ -72,7 +72,12 @@ def get_full_written_number(number: int) -> str:
 
         return f"{thousand_sentence_part} {THOUSAND} " \
                f"{hundred_sentence_part if hundred_sentence_part != 'zero' else ''}".strip()
+    elif 1_000_000 <= number < 1_000_000_000:
+        thousand_hundred_part = num[-6:]
+        million_part = num[:-6]
 
+        thousand_hundred_sentence_part = get_full_written_number(int(thousand_hundred_part))
+        million_sentence_part = get_full_written_number(int(million_part))
 
-
-
+        return f"{million_sentence_part} {MILLION} " \
+               f"{thousand_hundred_sentence_part if thousand_hundred_sentence_part != 'zero' else ''}".strip()

@@ -99,3 +99,11 @@ def test_thousands():
     assert get_full_written_number(999999) == "nine hundred ninety nine thousand nine hundred ninety nine"
 
 
+def test_millions():
+    assert get_full_written_number(999999999) == "nine hundred ninety nine million nine hundred ninety nine " \
+                                                 "thousand nine hundred ninety nine"
+    assert get_full_written_number(1000000) == "one million"
+    assert get_full_written_number(1000100) == "one million hundred"
+
+
+
