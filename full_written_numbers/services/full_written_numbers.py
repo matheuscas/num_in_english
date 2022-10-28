@@ -48,6 +48,23 @@ def get_full_written_number(number: int) -> str:
         return special_numbers[number]
 
     num = str(number)
+
+    def get_full_written_number_above_hundred(size: str):
+        sizes = {
+            HUNDRED: -2,
+            THOUSAND: -3,
+            MILLION: -6
+        }
+
+        first_part = num[sizes[size]:]
+        second_part = num[:sizes[size]]
+
+        first_sentence_part = get_full_written_number(int(first_part))
+        second_sentence_part = get_full_written_number(int(second_part))
+
+        return f"{second_sentence_part} {size} " \
+               f"{first_sentence_part if first_sentence_part != 'zero' else ''}".strip()
+
     if number < 20:
         second_digit = int(num[-1])
         return f"{teen_prefixes[second_digit]}{TEEN}"
@@ -56,28 +73,8 @@ def get_full_written_number(number: int) -> str:
         second_digit = int(num[1])
         return f"{ty_prefixes[first_digit]}{TY} {unit_numbers[second_digit] if second_digit > 0 else ''}".strip()
     elif 100 <= number < 1000:
-        first_digit = int(num[0])
-        rest = int(num[1:])
-
-        hundred_part = f"{'' if first_digit == 1 else unit_numbers[first_digit]} {HUNDRED}".strip()
-        dozen_part = get_full_written_number(rest)
-
-        return hundred_part if dozen_part == 'zero' else f"{hundred_part} {dozen_part}"
+        return get_full_written_number_above_hundred(HUNDRED)
     elif 1000 <= number < 1_000_000:
-        hundred_part = num[-3:]  # last three numbers
-        thousand_part = num[:-3]
-
-        hundred_sentence_part = get_full_written_number(int(hundred_part))
-        thousand_sentence_part = get_full_written_number(int(thousand_part))
-
-        return f"{thousand_sentence_part} {THOUSAND} " \
-               f"{hundred_sentence_part if hundred_sentence_part != 'zero' else ''}".strip()
+        return get_full_written_number_above_hundred(THOUSAND)
     elif 1_000_000 <= number < 1_000_000_000:
-        thousand_hundred_part = num[-6:]
-        million_part = num[:-6]
-
-        thousand_hundred_sentence_part = get_full_written_number(int(thousand_hundred_part))
-        million_sentence_part = get_full_written_number(int(million_part))
-
-        return f"{million_sentence_part} {MILLION} " \
-               f"{thousand_hundred_sentence_part if thousand_hundred_sentence_part != 'zero' else ''}".strip()
+        return get_full_written_number_above_hundred(MILLION)
