@@ -1,3 +1,5 @@
+from typing import Union, List
+
 unit_numbers = {
     0: "zero",
     1: "one",
@@ -44,17 +46,16 @@ def get_full_written_number(number: int) -> str:
         return unit_numbers[number]
     elif number in special_numbers:
         return special_numbers[number]
-    elif number < 20:
-        num = str(number)
+
+    num = str(number)
+    if number < 20:
         second_digit = int(num[-1])
         return f"{teen_prefixes[second_digit]}{TEEN}"
     elif 20 < number < 100:
-        num = str(number)
         first_digit = int(num[0])
         second_digit = int(num[1])
         return f"{ty_prefixes[first_digit]}{TY} {unit_numbers[second_digit] if second_digit > 0 else ''}".strip()
     elif 100 <= number < 1000:
-        num = str(number)
         first_digit = int(num[0])
         rest = int(num[1:])
 
@@ -62,6 +63,15 @@ def get_full_written_number(number: int) -> str:
         dozen_part = get_full_written_number(rest)
 
         return hundred_part if dozen_part == 'zero' else f"{hundred_part} {dozen_part}"
+    elif 1000 <= number < 1_000_000:
+        hundred_part = num[-3:] # last three numbers
+        thousand_part = num[:-3]
+
+        hundred_sentence_part = get_full_written_number(int(hundred_part))
+        thousand_sentence_part = get_full_written_number(int(thousand_part))
+
+        return f"{thousand_sentence_part} {THOUSAND} " \
+               f"{hundred_sentence_part if hundred_sentence_part != 'zero' else ''}".strip()
 
 
 

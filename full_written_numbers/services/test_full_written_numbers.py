@@ -72,4 +72,30 @@ def test_hundreds():
     assert get_full_written_number(252) == "two hundred fifty two"
     assert get_full_written_number(299) == "two hundred ninety nine"
 
+    assert get_full_written_number(999) == "nine hundred ninety nine"
+
+
+def test_thousands():
+    assert get_full_written_number(1000) == "one thousand"
+    assert get_full_written_number(1100) == "one thousand hundred"
+    assert get_full_written_number(1110) == "one thousand hundred ten"
+    assert get_full_written_number(1111) == "one thousand hundred eleven"
+
+    assert get_full_written_number(10000) == "ten thousand"
+    assert get_full_written_number(10100) == "ten thousand hundred"
+    assert get_full_written_number(10110) == "ten thousand hundred ten"
+    assert get_full_written_number(10111) == "ten thousand hundred eleven"
+
+    assert get_full_written_number(100000) == "hundred thousand"
+    assert get_full_written_number(100100) == "hundred thousand hundred"
+    assert get_full_written_number(100110) == "hundred thousand hundred ten"
+    assert get_full_written_number(100111) == "hundred thousand hundred eleven"
+
+    assert get_full_written_number(300000) == "three hundred thousand"
+    assert get_full_written_number(300400) == "three hundred thousand four hundred"
+    assert get_full_written_number(300560) == "three hundred thousand five hundred sixty"
+    assert get_full_written_number(300891) == "three hundred thousand eight hundred ninety one"
+
+    assert get_full_written_number(999999) == "nine hundred ninety nine thousand nine hundred ninety nine"
+
 
