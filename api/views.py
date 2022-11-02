@@ -1,20 +1,12 @@
 from django.shortcuts import get_object_or_404
-from ninja import NinjaAPI, Schema
+from ninja import NinjaAPI
 
+from api.exceptions import register_handlers
+from api.schemas import EnglishNumberOut, Error
 from full_written_numbers.models import EnglishNumbers
 
 api = NinjaAPI()
-
-
-class EnglishNumberOut(Schema):
-    status: str
-    num_to_english: str
-
-
-class Error(Schema):
-    status: str
-    num_to_english: str
-
+register_handlers(api)
 
 ENDPOINT = "/num_to_english"
 
