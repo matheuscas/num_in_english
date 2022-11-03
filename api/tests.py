@@ -1,5 +1,6 @@
 import pytest
 
+from api.schemas import Error, EnglishNumberOut
 from api.views import ENDPOINT
 from http import HTTPStatus
 from api.views import api
@@ -55,3 +56,32 @@ def test_number_found():
         "num_to_english": written_number
     }
 
+
+def test_post_payload_structure():
+    response = client.post(ENDPOINT)
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert response.json() == Error(status="Wrong payload structure", num_to_english="").dict()
+
+
+def test_post_payload_number_type():
+    response = client.post(ENDPOINT, json={"number": "12A3"})
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert response.json() == Error(status="'number' must be a valid integer", num_to_english="").dict()
+
+
+@pytest.mark.django_db
+def test_existing_number_failure():
+    EnglishNumbers(number=99, written_number="ninety nine").save()
+    response = client.post(ENDPOINT, json={"number": "99"})
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.json() == Error(status="Number already exists", num_to_english="").dict()
+
+
+@pytest.mark.django_db
+def test_number_conversion_successful():
+    response = client.post(ENDPOINT, json={"number": "99"})
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == EnglishNumberOut(
+        status="ok",
+        num_to_english="ninety nine"
+    )

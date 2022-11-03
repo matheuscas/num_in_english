@@ -6,6 +6,10 @@ class EnglishNumberOut(Schema):
     num_to_english: str
 
 
+class EnglishNumberIn(Schema):
+    number: str
+
+
 class Error(Schema):
     status: str
     num_to_english: str
