@@ -13,6 +13,10 @@ class ExistingNumberException(Exception):
     pass
 
 
+class UnauthorizedException(Exception):
+    pass
+
+
 def register_handlers(api: NinjaAPI):
     @api.exception_handler(Http404)
     def not_found(request, exc):
@@ -71,4 +75,12 @@ def register_handlers(api: NinjaAPI):
             request,
             {"status": "Number already exists", "num_to_english": ""},
             status=HTTPStatus.BAD_REQUEST
+        )
+
+    @api.exception_handler(UnauthorizedException)
+    def unauthorized(request, _):
+        return api.create_response(
+            request,
+            {"status": "Unauthorized. Missing Bearer token", "num_to_english": ""},
+            status=HTTPStatus.UNAUTHORIZED
         )

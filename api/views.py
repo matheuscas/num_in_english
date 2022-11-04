@@ -2,12 +2,13 @@ from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from ninja import NinjaAPI
 
+from api.auth import GlobalAuth
 from api.exceptions import register_handlers, WrongNumberTypeException, ExistingNumberException
 from api.schemas import EnglishNumberOut, Error, EnglishNumberIn
 from full_written_numbers.models import EnglishNumbers
 from full_written_numbers.services.full_written_numbers import get_full_written_number
 
-api = NinjaAPI()
+api = NinjaAPI(auth=GlobalAuth())
 register_handlers(api)
 
 ENDPOINT = "/num_to_english"

@@ -1,3 +1,7 @@
+import os
+from typing import Any
+from unittest import mock
+
 import pytest
 
 from api.schemas import Error, EnglishNumberOut
@@ -5,11 +9,23 @@ from api.views import ENDPOINT
 from http import HTTPStatus
 from api.views import api
 
-from ninja.testing import TestClient as NinjaTestClient
+from ninja.testing import TestClient
 
+from djangoProject.settings import SECRET_KEY
 from full_written_numbers.models import EnglishNumbers
 
-client = NinjaTestClient(api)
+from django.test import override_settings
+
+
+class AuthenticatedClient(TestClient):
+    @override_settings(SECRET_KEY="token")
+    def request(self, method, path, data={}, json=None, **request_params: Any):
+        headers = {"Authorization": f"Bearer {SECRET_KEY}"}
+        request_params.setdefault("headers", headers)
+        return super().request(method, path, data, json, **request_params)
+
+
+client = AuthenticatedClient(api)
 
 
 def test_missing_number_query_param():
@@ -84,4 +100,18 @@ def test_number_conversion_successful():
     assert response.json() == EnglishNumberOut(
         status="ok",
         num_to_english="ninety nine"
+    )
+
+
+@pytest.mark.django_db
+def test_unauthorized_request():
+    response = client.post(
+        ENDPOINT,
+        json={"number": "99"},
+        headers={"Authorization": f"Bearer wrong"}
+    )
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
+    assert response.json() == EnglishNumberOut(
+        status="Unauthorized. Missing Bearer token",
+        num_to_english=""
     )
