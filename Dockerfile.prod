@@ -1,0 +1,60 @@
+FROM python:3.10-alpine as builder
+
+WORKDIR /usr/src/app
+
+# disables an automatic check for pip updates each time
+ENV PIP_DISABLE_PIP_VERSION_CHECK 1
+# means Python will not try to write .pyc files
+ENV PYTHONDONTWRITEBYTECODE 1
+# ensures our console output is not buffered by Docker
+ENV PYTHONUNBUFFERED 1
+
+RUN apk update && apk upgrade
+RUN apk add --no-cache --virtual .build-deps \
+    ca-certificates gcc postgresql-dev linux-headers musl-dev \
+    libffi-dev jpeg-dev zlib-dev
+
+COPY poetry.lock pyproject.toml /usr/src/app/
+RUN pip3 install poetry
+RUN poetry config virtualenvs.create false
+RUN poetry export --without-hashes --format=requirements.txt > requirements.txt
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
+
+
+
+FROM python:3.10-alpine
+
+# create directory for the app user
+RUN mkdir -p /home/app
+
+# create the app user
+RUN addgroup -S app && adduser -S app -G app
+
+# create the appropriate directories
+ENV HOME=/home/app
+ENV APP_HOME=/home/app/web
+RUN mkdir $APP_HOME
+WORKDIR $APP_HOME
+
+# install dependencies
+RUN apk update && apk add libpq
+COPY --from=builder /usr/src/app/wheels /wheels
+COPY --from=builder /usr/src/app/requirements.txt .
+RUN pip install --no-cache /wheels/*
+
+# copy entrypoint.prod.sh
+COPY ./entrypoint.prod.sh .
+RUN sed -i 's/\r$//g'  $APP_HOME/entrypoint.prod.sh
+RUN chmod +x  $APP_HOME/entrypoint.prod.sh
+
+# copy project
+COPY . $APP_HOME
+
+# chown all the files to the app user
+RUN chown -R app:app $APP_HOME
+
+# change to the app user
+USER app
+
+# run entrypoint.prod.sh
+ENTRYPOINT ["/home/app/web/entrypoint.prod.sh"]
